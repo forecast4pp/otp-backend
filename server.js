@@ -1,10 +1,12 @@
 const express = require("express");
 const cors = require("cors");
-const nodemailer = require("nodemailer");
+const { Resend } = require("resend");
 
 const app = express();
 
-// Middleware
+/* =========================
+   MIDDLEWARE
+   ========================= */
 app.use(cors({
   origin: "*",
   methods: ["GET", "POST"]
@@ -13,61 +15,38 @@ app.use(cors({
 app.use(express.json());
 
 /* =========================
-   EMAIL TRANSPORTER
+   RESEND SETUP
    ========================= */
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true, // true for 465
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  },
-
-  // Debugging
-  logger: true,
-  debug: true,
-
-  // Timeouts
-  connectionTimeout: 10000, // 10 sec
-  greetingTimeout: 10000,
-  socketTimeout: 10000
-});
-
-/* =========================
-   VERIFY SMTP CONNECTION
-   ========================= */
-transporter.verify((error, success) => {
-  if (error) {
-    console.error("SMTP VERIFY ERROR:", error);
-  } else {
-    console.log("SMTP SERVER IS READY");
-  }
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 /* =========================
    SEND OTP ROUTE
    ========================= */
 app.post("/send-otp", async (req, res) => {
+
   const { email, otp, firstName } = req.body;
 
   try {
 
-    // Check if env vars exist
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    // Check API key
+    if (!process.env.RESEND_API_KEY) {
       return res.status(500).json({
         status: "error",
-        message: "Missing EMAIL_USER or EMAIL_PASS"
+        message: "Missing RESEND_API_KEY"
       });
     }
 
-    const mailOptions = {
-      from: `"Forecast App" <${process.env.EMAIL_USER}>`,
+    // Send email
+    const response = await resend.emails.send({
+      from: "Forecast App <onboarding@resend.dev>",
       to: email,
       subject: "Your OTP Code",
+
       html: `
-        <div style="font-family: Arial, sans-serif;">
+        <div style="font-family: Arial, sans-serif; padding: 20px;">
+          
           <h2>Hello ${firstName}</h2>
+
           <p>Your OTP code is:</p>
 
           <div style="
@@ -81,13 +60,12 @@ app.post("/send-otp", async (req, res) => {
           </div>
 
           <p>This OTP will expire shortly.</p>
+
         </div>
       `
-    };
+    });
 
-    const info = await transporter.sendMail(mailOptions);
-
-    console.log("EMAIL SENT:", info.response);
+    console.log("EMAIL SENT:", response);
 
     return res.json({
       status: "success",
@@ -98,16 +76,14 @@ app.post("/send-otp", async (req, res) => {
 
     console.error("OTP EMAIL ERROR FULL:", {
       message: error.message,
-      code: error.code,
-      command: error.command,
-      response: error.response
+      name: error.name,
+      stack: error.stack
     });
 
     return res.status(500).json({
       status: "error",
       message: "Failed to send OTP",
-      error: error.message,
-      code: error.code
+      error: error.message
     });
   }
 });

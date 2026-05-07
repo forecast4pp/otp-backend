@@ -1,0 +1,83 @@
+<ion-menu contentId="main-content" style="--width: 260px;">
+  <ion-header>
+    <ion-toolbar style="--background: #3a2f6b; --color: white;">
+      <ion-title style="font-weight: 700;">Menu</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content style="--background: #3a2f6b;">
+    <ion-list lines="none" style="background: transparent; padding: 10px;">
+      <ion-menu-toggle auto-hide="false">
+        <ion-item button detail="false" routerLink="/home" style="--background: rgba(255, 255, 255, 0.1); --color: white; --border-radius: 12px; margin-bottom: 8px;">
+          <ion-icon slot="start" name="home-outline" style="color: #3ec995;"></ion-icon>
+          <ion-label style="font-weight: 600;">Homepage</ion-label>
+        </ion-item>
+      </ion-menu-toggle>
+      <ion-menu-toggle auto-hide="false">
+        <ion-item button detail="false" routerLink="/climates" style="--background: rgba(255, 255, 255, 0.1); --color: white; --border-radius: 12px; margin-bottom: 8px;">
+          <ion-icon slot="start" name="partly-sunny-outline" style="color: #3ec995;"></ion-icon>
+          <ion-label style="font-weight: 600;">Climates</ion-label>
+        </ion-item>
+      </ion-menu-toggle>
+      <ion-menu-toggle auto-hide="false">
+        <ion-item button detail="false" routerLink="/monthly" style="--background: rgba(255, 255, 255, 0.1); --color: white; --border-radius: 12px; margin-bottom: 8px;">
+          <ion-icon slot="start" name="calendar-outline" style="color: #3ec995;"></ion-icon>
+          <ion-label style="font-weight: 600;">Monthly</ion-label>
+        </ion-item>
+      </ion-menu-toggle>
+    </ion-list>
+  </ion-content>
+</ion-menu>
+
+<div class="ion-page" id="main-content">
+<ion-header [translucent]="true">
+  <ion-toolbar style="--background: #3a2f6b; --color: white;">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/climates"></ion-back-button>
+    </ion-buttons>
+    <ion-title style="font-weight: 800; letter-spacing: 2px; font-size: 1.1rem;">
+      F.O.R.E.C.A.S.T.
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" style="--background: linear-gradient(to bottom, #3a2f6b 0%, #36669c 100%);">
+  <div style="padding: 16px;">
+    <!-- Month Selection -->
+    <ion-card style="--background: rgba(255, 255, 255, 0.1); border: 1px solid #41a0ae; border-radius: 16px; margin: 0 0 20px 0;">
+      <ion-item lines="none" style="--background: transparent; --color: white;">
+        <ion-icon slot="start" name="calendar-outline" style="color: #3ec995;"></ion-icon>
+        <ion-label style="font-weight: 600;">View Month</ion-label>
+        <ion-datetime-button datetime="monthly-picker"></ion-datetime-button>
+      </ion-item>
+    </ion-card>
+
+    <ion-modal [keepContentsMounted]="true">
+      <ng-template>
+        <ion-datetime id="monthly-picker" presentation="month-year" (ionChange)="onMonthChange($event)"></ion-datetime>
+      </ng-template>
+    </ion-modal>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 0;">
+      <ion-spinner name="crescent" style="color: #3ec995;"></ion-spinner>
+      <p style="color: white; margin-top: 10px; font-weight: 500;">Loading forecast...</p>
+    </div>
+
+    <!-- Weekly Summary -->
+    <div *ngIf="!isLoading && weeksForecast">
+      <ion-card *ngFor="let week of weeksForecast" style="--background: rgba(255, 255, 255, 0.05); border: 1px solid #41a0ae; border-radius: 16px; margin: 0 0 12px 0;">
+        <ion-card-content>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <div style="color: #3ec995; font-weight: 700; font-size: 0.85rem; text-transform: uppercase;">{{ week.label }}</div>
+              <div style="color: white; font-size: 1.5rem; font-weight: bold; margin: 4px 0;">{{ week.avgTemp }}°C</div>
+              <div style="color: #41a0ae; font-weight: 600; text-transform: capitalize;">{{ week.description }}</div>
+            </div>
+            <ion-icon [name]="week.icon || 'partly-sunny-outline'" style="font-size: 2.8rem; color: #3ec995;"></ion-icon>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
+</ion-content>
+</div>

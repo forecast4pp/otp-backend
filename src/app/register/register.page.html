@@ -1,0 +1,77 @@
+<ion-header [translucent]="true">
+  <ion-toolbar style="--background: #3a2f6b; --color: white;">
+    <ion-title style="font-weight: 700;">Register</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" style="--background: linear-gradient(to bottom, #3a2f6b 0%, #36669c 100%);">
+  <div class="ion-padding">
+    <ion-card style="--background: linear-gradient(135deg, #3a2f6b 0%, #36669c 100%); border: 1px solid #41a0ae; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+      <ion-card-header>
+        <ion-card-title class="ion-text-center" style="color: white; font-weight: 700;">Create Account</ion-card-title>
+        <ion-card-subtitle class="ion-text-center" style="color: #77f07f;">Join us for accurate forecasts</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <ion-list lines="full" style="background: transparent;">
+          <ion-item style="--background: transparent; --color: white;">
+            <ion-input label="First Name" labelPlacement="floating" type="text" placeholder="Enter first name" [(ngModel)]="firstName" [autofocus]="true" style="--highlight-color-focused: #41a0ae; --color: white; color: white;"></ion-input>
+          </ion-item>
+
+          <ion-item style="--background: transparent; --color: white;">
+            <ion-input label="Middle Name" labelPlacement="floating" type="text" placeholder="Enter middle name (optional)" [(ngModel)]="middleName" style="--highlight-color-focused: #41a0ae; --color: white; color: white;"></ion-input>
+          </ion-item>
+
+          <ion-item style="--background: transparent; --color: white;">
+            <ion-input label="Last Name" labelPlacement="floating" type="text" placeholder="Enter last name" [(ngModel)]="lastName" style="--highlight-color-focused: #41a0ae; --color: white; color: white;"></ion-input>
+          </ion-item>
+
+          <ion-item style="--background: transparent; --color: white;">
+            <ion-input label="Suffix" labelPlacement="floating" type="text" placeholder="e.g. Jr., III (optional)" [(ngModel)]="suffix" style="--highlight-color-focused: #41a0ae; --color: white; color: white;"></ion-input>
+          </ion-item>
+
+          <ion-item style="--background: transparent; --color: white;">
+            <ion-input label="Address" labelPlacement="floating" type="text" placeholder="Enter your full address" [(ngModel)]="address" style="--highlight-color-focused: #41a0ae; --color: white; color: white;"></ion-input>
+          </ion-item>
+
+          <ion-item style="--background: transparent; --color: white;">
+            <ion-input label="Age" labelPlacement="floating" type="number" placeholder="Enter your age" [(ngModel)]="age" style="--highlight-color-focused: #41a0ae; --color: white; color: white;"></ion-input>
+          </ion-item>
+
+          <ion-item style="--background: transparent; --color: white;">
+            <ion-input label="Birthday" labelPlacement="floating" type="date" placeholder="Select your birthday" [(ngModel)]="birthday" style="--highlight-color-focused: #41a0ae; --color: white; color: white;"></ion-input>
+          </ion-item>
+
+          <ion-item style="--background: transparent; --color: white;">
+            <ion-input label="Username" labelPlacement="floating" type="text" placeholder="Choose a username" [(ngModel)]="username" style="--highlight-color-focused: #41a0ae; --color: white; color: white;"></ion-input>
+          </ion-item>
+
+          <ion-item style="--background: transparent; --color: white;">
+            <ion-input label="Phone Number" labelPlacement="floating" type="tel" placeholder="Enter your phone number" [(ngModel)]="phoneNumber" style="--highlight-color-focused: #41a0ae; --color: white; color: white;"></ion-input>
+          </ion-item>
+
+          <ion-item style="--background: transparent; --color: white;">
+            <ion-input label="Email" labelPlacement="floating" type="email" placeholder="Enter your email" [(ngModel)]="email" style="--highlight-color-focused: #41a0ae; --color: white; color: white;"></ion-input>
+          </ion-item>
+
+          <ion-item style="--background: transparent; --color: white;">
+            <ion-input label="6-Digit PIN" labelPlacement="floating" type="password" inputmode="numeric" maxlength="6" placeholder="Set a 6-digit PIN" [(ngModel)]="pin" style="--highlight-color-focused: #41a0ae; --color: white; color: white;"></ion-input>
+          </ion-item>
+
+          <ion-item style="--background: transparent; --color: white;">
+            <ion-input label="Confirm PIN" labelPlacement="floating" type="password" inputmode="numeric" maxlength="6" placeholder="Confirm your PIN" [(ngModel)]="confirmPin" style="--highlight-color-focused: #41a0ae; --color: white; color: white;"></ion-input>
+          </ion-item>
+        </ion-list>
+
+        <!-- Register Button -->
+        <ion-button expand="block" class="ion-margin-top" (click)="onRegister()" style="--background: #41a0ae; --color: white; --border-radius: 12px;">Create Account</ion-button>
+
+        <div class="ion-text-center ion-margin-top">
+          <ion-button fill="clear" size="small" routerLink="/login" style="--color: #3ec995;">
+            Already have an account? Login
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

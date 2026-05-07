@@ -1,0 +1,42 @@
+[
+  {
+    "id": "1r0VCg0bITB7BO8KkJTM",
+    "firstName": "Nasser",
+    "middleName": "D",
+    "lastName": "Eliazar",
+    "suffix": "",
+    "username": "testuser1",
+    "phoneNumber": "098882828282828282828",
+    "address": "Mangga, San Jose",
+    "age": 21,
+    "birthday": "2004-12-12",
+    "email": "shogikoukou@gmail.com",
+    "pin": "111111",
+    "otp": "227996",
+    "createdAt": {
+      "_seconds": 1776345684,
+      "_nanoseconds": 261000000
+    },
+    "isVerified": true
+  },
+  {
+    "id": "BtI9rP5HPj8mKh9oTgwB",
+    "firstName": "Lance RIcky",
+    "middleName": "De Guzman",
+    "lastName": "Garcia",
+    "suffix": "",
+    "username": "testuser",
+    "phoneNumber": "09276653289",
+    "address": "Pulo, San Isidro, Nueva Ecija",
+    "age": 21,
+    "birthday": "2005-01-27",
+    "email": "lancegarcia823@gmail.com",
+    "pin": "123456",
+    "otp": "402935",
+    "createdAt": {
+      "_seconds": 1776836356,
+      "_nanoseconds": 560000000
+    },
+    "isVerified": true
+  }
+]

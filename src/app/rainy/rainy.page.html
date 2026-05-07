@@ -1,0 +1,43 @@
+<ion-header [translucent]="true">
+  <ion-toolbar style="--background: #3a2f6b; --color: white;">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/climates" style="color: white;"></ion-back-button>
+    </ion-buttons>
+    <ion-title style="font-weight: 700;">Rainy Climate</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" style="--background: linear-gradient(to bottom, #3a2f6b 0%, #41a0ae 100%);">
+  <div class="ion-padding ion-text-center">
+    <ion-card style="--background: rgba(255, 255, 255, 0.1); border-radius: 16px; margin-top: 20px; border: 1px solid rgba(65, 160, 174, 0.3);">
+      <ion-card-content>
+        <ion-icon name="rainy-outline" style="font-size: 4rem; color: #41a0ae;"></ion-icon>
+        <h2 style="font-weight: 700; color: white; font-size: 1.8rem; margin-top: 10px;">Rainy</h2>
+        <p style="color: rgba(255, 255, 255, 0.8); font-size: 1rem; line-height: 1.5; margin-bottom: 20px;">
+          Expect persistent rainfall and overcast skies. Perfect for a cozy day indoors.
+          Don't forget your umbrella!
+        </p>
+
+        <div style="text-align: left; background: rgba(0, 0, 0, 0.2); padding: 15px; border-radius: 12px;">
+          <h3 style="color: #41a0ae; font-weight: 600; margin-top: 0;">Water & Moisture-related:</h3>
+          <ion-list lines="none" style="background: transparent;">
+            <ion-item button (click)="openSicknessInfo('Leptospirosis')" style="--background: transparent; --color: white;">Leptospirosis</ion-item>
+            <ion-item button (click)="openSicknessInfo('Dengue Fever')" style="--background: transparent; --color: white;">Dengue Fever</ion-item>
+            <ion-item button (click)="openSicknessInfo('Malaria')" style="--background: transparent; --color: white;">Malaria</ion-item>
+            <ion-item button (click)="openSicknessInfo('Chikungunya')" style="--background: transparent; --color: white;">Chikungunya</ion-item>
+          </ion-list>
+
+          <h3 style="color: #41a0ae; font-weight: 600;">Respiratory & Contamination:</h3>
+          <ion-list lines="none" style="background: transparent;">
+            <ion-item button (click)="openSicknessInfo('Common Cold')" style="--background: transparent; --color: white;">Common Cold</ion-item>
+            <ion-item button (click)="openSicknessInfo('Sore Throat')" style="--background: transparent; --color: white;">Sore Throat</ion-item>
+            <ion-item button (click)="openSicknessInfo('Flu (Influenza)')" style="--background: transparent; --color: white;">Flu (Influenza)</ion-item>
+            <ion-item button (click)="openSicknessInfo('Diarrhea')" style="--background: transparent; --color: white;">Diarrhea</ion-item>
+            <ion-item button (click)="openSicknessInfo('Cholera')" style="--background: transparent; --color: white;">Cholera</ion-item>
+            <ion-item button (click)="openSicknessInfo('Typhoid Fever')" style="--background: transparent; --color: white;">Typhoid Fever</ion-item>
+          </ion-list>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

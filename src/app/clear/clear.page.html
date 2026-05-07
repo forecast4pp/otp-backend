@@ -1,0 +1,34 @@
+<ion-header [translucent]="true">
+  <ion-toolbar style="--background: #3a2f6b; --color: white;">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/climates" style="color: white;"></ion-back-button>
+    </ion-buttons>
+    <ion-title style="font-weight: 700;">Clear Climate</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" style="--background: linear-gradient(to bottom, #3a2f6b 0%, #3ec995 100%);">
+  <div class="ion-padding ion-text-center">
+    <ion-card style="--background: rgba(255, 255, 255, 0.1); border-radius: 16px; margin-top: 20px; border: 1px solid rgba(62, 201, 149, 0.3);">
+      <ion-card-content>
+        <ion-icon name="sunny-outline" style="font-size: 4rem; color: #3ec995;"></ion-icon>
+        <h2 style="font-weight: 700; color: white; font-size: 1.8rem; margin-top: 10px;">Clear</h2>
+        <p style="color: rgba(255, 255, 255, 0.8); font-size: 1rem; line-height: 1.5; margin-bottom: 20px;">
+          Unobstructed views with no clouds in sight. Crisp air and great visibility.
+          A perfect day!
+        </p>
+
+        <div style="text-align: left; background: rgba(0, 0, 0, 0.2); padding: 15px; border-radius: 12px;">
+          <h3 style="color: #3ec995; font-weight: 600; margin-top: 0;">Dry Climate Concerns:</h3>
+          <ion-list lines="none" style="background: transparent;">
+            <ion-item button (click)="openSicknessInfo('Dry Skin')" style="--background: transparent; --color: white;">Dry skin</ion-item>
+            <ion-item button (click)="openSicknessInfo('Nosebleed')" style="--background: transparent; --color: white;">Nosebleeds</ion-item>
+            <ion-item button (click)="openSicknessInfo('Sinusitis')" style="--background: transparent; --color: white;">Sinusitis</ion-item>
+            <ion-item button (click)="openSicknessInfo('Dry Cough')" style="--background: transparent; --color: white;">Dry cough</ion-item>
+            <ion-item button (click)="openSicknessInfo('Eye Irritation')" style="--background: transparent; --color: white;">Eye irritation</ion-item>
+          </ion-list>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

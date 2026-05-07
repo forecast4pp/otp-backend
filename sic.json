@@ -1,0 +1,47 @@
+[
+  {
+    "caseId": "case001",
+    "userId": "1r0VCg0bITB7BO8KkJTM",
+    "fullName": "Nasser D Eliazar",
+    "sicknessName": "Dengue",
+    "climateType": "Rainy",
+    "temperature": 31,
+    "humidity": 88,
+    "barangay": "Mangga",
+    "municipality": "San Jose",
+    "province": "Nueva Ecija",
+    "dateReported": "2026-05-02",
+    "month": 5,
+    "year": 2026
+  },
+  {
+    "caseId": "case002",
+    "userId": "BtI9rP5HPj8mKh9oTgwB",
+    "fullName": "Lance Ricky Garcia",
+    "sicknessName": "Flu",
+    "climateType": "Rainy",
+    "temperature": 30,
+    "humidity": 90,
+    "barangay": "Pulo",
+    "municipality": "San Isidro",
+    "province": "Nueva Ecija",
+    "dateReported": "2026-05-03",
+    "month": 5,
+    "year": 2026
+  },
+  {
+    "caseId": "case003",
+    "userId": "1r0VCg0bITB7BO8KkJTM",
+    "fullName": "Nasser D Eliazar",
+    "sicknessName": "Heatstroke",
+    "climateType": "Sunny",
+    "temperature": 38,
+    "humidity": 60,
+    "barangay": "Mangga",
+    "municipality": "San Jose",
+    "province": "Nueva Ecija",
+    "dateReported": "2026-05-05",
+    "month": 5,
+    "year": 2026
+  }
+]

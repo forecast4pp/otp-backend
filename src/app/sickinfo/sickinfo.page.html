@@ -1,0 +1,56 @@
+<ion-header [translucent]="true">
+  <ion-toolbar style="--background: #3a2f6b; --color: white;">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/rainy" style="color: white;"></ion-back-button>
+    </ion-buttons>
+    <ion-title style="font-weight: 700;">{{ sicknessName }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button style="--color: white; font-weight: 600;">I have it</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" style="--background: linear-gradient(to bottom, #3a2f6b 0%, #41a0ae 100%);">
+  <div class="ion-padding" *ngIf="info">
+    <ion-card style="--background: rgba(255, 255, 255, 0.1); border-radius: 16px; border: 1px solid rgba(65, 160, 174, 0.3); margin: 0;">
+      <ion-card-header>
+        <ion-card-title style="color: #41a0ae; font-weight: 700; font-size: 1.3rem;">Precautions (Pag-iwas):</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ul style="color: white; padding-left: 20px; line-height: 1.5; font-size: 1rem;">
+          <li *ngFor="let p of info.precautions" style="margin-bottom: 10px;">
+            {{ getEnglish(p) }}
+            <br *ngIf="getTagalog(p)">
+            <i *ngIf="getTagalog(p)" style="color: rgba(255, 255, 255, 0.7);">{{ getTagalog(p) }}</i>
+          </li>
+        </ul>
+      </ion-card-content>
+
+      <ion-card-header>
+        <ion-card-title style="color: #41a0ae; font-weight: 700; font-size: 1.3rem;">Symptoms (Sintomas):</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ul style="color: white; padding-left: 20px; line-height: 1.5; font-size: 1rem;">
+          <li *ngFor="let s of info.symptoms" style="margin-bottom: 10px;">
+            {{ getEnglish(s) }}
+            <br *ngIf="getTagalog(s)">
+            <i *ngIf="getTagalog(s)" style="color: rgba(255, 255, 255, 0.7);">{{ getTagalog(s) }}</i>
+          </li>
+        </ul>
+      </ion-card-content>
+
+      <ion-card-header>
+        <ion-card-title style="color: #41a0ae; font-weight: 700; font-size: 1.3rem;">What to Do o Remedy (Gagawin o Lunas):</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ul style="color: white; padding-left: 20px; line-height: 1.5; font-size: 1rem;">
+          <li *ngFor="let r of info.remedy" style="margin-bottom: 10px;">
+            {{ getEnglish(r) }}
+            <br *ngIf="getTagalog(r)">
+            <i *ngIf="getTagalog(r)" style="color: rgba(255, 255, 255, 0.7);">{{ getTagalog(r) }}</i>
+          </li>
+        </ul>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

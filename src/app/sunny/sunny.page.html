@@ -1,0 +1,41 @@
+<ion-header [translucent]="true">
+  <ion-toolbar style="--background: #3a2f6b; --color: white;">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/climates" style="color: white;"></ion-back-button>
+    </ion-buttons>
+    <ion-title style="font-weight: 700;">Sunny Climate</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" style="--background: linear-gradient(to bottom, #3a2f6b 0%, #ffce00 100%);">
+  <div class="ion-padding ion-text-center">
+    <ion-card style="--background: rgba(255, 255, 255, 0.1); border-radius: 16px; margin-top: 20px; border: 1px solid rgba(255, 206, 0, 0.3);">
+      <ion-card-content>
+        <ion-icon name="sunny-outline" style="font-size: 4rem; color: #ffce00;"></ion-icon>
+        <h2 style="font-weight: 700; color: white; font-size: 1.8rem; margin-top: 10px;">Sunny</h2>
+        <p style="color: rgba(255, 255, 255, 0.8); font-size: 1rem; line-height: 1.5; margin-bottom: 20px;">
+          Bright and clear skies with plenty of sunlight. Ideal for outdoor activities.
+          Enjoy the warmth!
+        </p>
+
+        <div style="text-align: left; background: rgba(0, 0, 0, 0.2); padding: 15px; border-radius: 12px;">
+          <h3 style="color: #ffce00; font-weight: 600; margin-top: 0;">Common Illnesses:</h3>
+          <ion-list lines="none" style="background: transparent;">
+            <ion-item button (click)="openSicknessInfo('Heat Exhaustion')" style="--background: transparent; --color: white;">Heat Exhaustion</ion-item>
+            <ion-item button (click)="openSicknessInfo('Heat Stroke (Life-Threatening)')" style="--background: transparent; --color: white;">Heat Stroke (Life-Threatening)</ion-item>
+            <ion-item button (click)="openSicknessInfo('Dehydration')" style="--background: transparent; --color: white;">Dehydration</ion-item>
+            <ion-item button (click)="openSicknessInfo('Sunburn')" style="--background: transparent; --color: white;">Sunburn</ion-item>
+            <ion-item button (click)="openSicknessInfo('Heat Rash (Bungang Araw)')" style="--background: transparent; --color: white;">Heat Rash (Bungang Araw)</ion-item>
+          </ion-list>
+          
+          <h3 style="color: #ffce00; font-weight: 600;">Other Risks:</h3>
+          <ion-list lines="none" style="background: transparent;">
+            <ion-item button (click)="openSicknessInfo('Food Poisoning')" style="--background: transparent; --color: white;">Food Poisoning</ion-item>
+            <ion-item button (click)="openSicknessInfo('Headaches / Migraine')" style="--background: transparent; --color: white;">Headaches / Migraine</ion-item>
+            <ion-item button (click)="openSicknessInfo('Low Blood Pressure')" style="--background: transparent; --color: white;">Low Blood Pressure</ion-item>
+          </ion-list>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

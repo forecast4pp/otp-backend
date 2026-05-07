@@ -1,0 +1,31 @@
+{
+  "Rainy": {
+    "commonSickness": [
+      "Dengue",
+      "Leptospirosis",
+      "Flu",
+      "Common Cold"
+    ]
+  },
+  "Sunny": {
+    "commonSickness": [
+      "Heatstroke",
+      "Dehydration",
+      "Sunburn"
+    ]
+  },
+  "Stormy": {
+    "commonSickness": [
+      "Diarrhea",
+      "Skin Infections",
+      "Tetanus"
+    ]
+  },
+  "Cloudy": {
+    "commonSickness": [
+      "Flu",
+      "Headache",
+      "Sinusitis"
+    ]
+  }
+}

@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const { Resend } = require("resend");
+const nodemailer = require("nodemailer");
 
 const app = express();
 
@@ -15,12 +15,7 @@ app.use(cors({
 app.use(express.json());
 
 /* =========================
-   RESEND SETUP
-   ========================= */
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-/* =========================
-   SEND OTP ROUTE
+   ROUTE: SEND OTP
    ========================= */
 app.post("/send-otp", async (req, res) => {
 
@@ -28,44 +23,30 @@ app.post("/send-otp", async (req, res) => {
 
   try {
 
-    // Check API key
-    if (!process.env.RESEND_API_KEY) {
-      return res.status(500).json({
-        status: "error",
-        message: "Missing RESEND_API_KEY"
-      });
-    }
-
-    // Send email
-    const response = await resend.emails.send({
-      from: "Forecast App <onboarding@resend.dev>",
-      to: email,
-      subject: "Your OTP Code",
-
-      html: `
-        <div style="font-family: Arial, sans-serif; padding: 20px;">
-          
-          <h2>Hello ${firstName}</h2>
-
-          <p>Your OTP code is:</p>
-
-          <div style="
-            font-size: 32px;
-            font-weight: bold;
-            letter-spacing: 5px;
-            margin: 20px 0;
-            color: #2563eb;
-          ">
-            ${otp}
-          </div>
-
-          <p>This OTP will expire shortly.</p>
-
-        </div>
-      `
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+      }
     });
 
-    console.log("EMAIL SENT:", response);
+    const mailOptions = {
+      from: `"Forecast App" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "Your OTP Code",
+      html: `
+        <div style="font-family: Arial;">
+          <h2>Hello ${firstName}</h2>
+          <p>Your OTP is:</p>
+          <h1>${otp}</h1>
+        </div>
+      `
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    console.log("OTP SENT SUCCESSFULLY");
 
     return res.json({
       status: "success",
@@ -74,11 +55,7 @@ app.post("/send-otp", async (req, res) => {
 
   } catch (error) {
 
-    console.error("OTP EMAIL ERROR FULL:", {
-      message: error.message,
-      name: error.name,
-      stack: error.stack
-    });
+    console.error("OTP EMAIL ERROR:", error);
 
     return res.status(500).json({
       status: "error",
@@ -89,7 +66,7 @@ app.post("/send-otp", async (req, res) => {
 });
 
 /* =========================
-   TEST ROUTE
+   HEALTH CHECK
    ========================= */
 app.get("/", (req, res) => {
   res.send("OTP Server Running");

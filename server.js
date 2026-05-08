@@ -1,4 +1,3 @@
-require("dotenv").config(); // if using .env
 
 const express = require("express");
 const cors = require("cors");

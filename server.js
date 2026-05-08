@@ -1,3 +1,5 @@
+require("dotenv").config(); // if using .env
+
 const express = require("express");
 const cors = require("cors");
 const nodemailer = require("nodemailer");
@@ -21,10 +23,20 @@ app.post("/send-otp", async (req, res) => {
 
   const { email, otp, firstName } = req.body;
 
+  // Basic validation
+  if (!email || !otp || !firstName) {
+    return res.status(400).json({
+      status: "error",
+      message: "Missing required fields"
+    });
+  }
+
   try {
 
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false, // TLS
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
@@ -40,12 +52,17 @@ app.post("/send-otp", async (req, res) => {
           <h2>Hello ${firstName}</h2>
           <p>Your OTP is:</p>
           <h1>${otp}</h1>
+          <p>This code will expire soon.</p>
         </div>
       `
     };
 
-    await transporter.sendMail(mailOptions);
+    // Verify SMTP connection
+    await transporter.verify();
+    console.log("SMTP connection verified");
 
+    // 🔥 ACTUAL SEND
+    await transporter.sendMail(mailOptions);
     console.log("OTP SENT SUCCESSFULLY");
 
     return res.json({

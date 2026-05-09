@@ -1,4 +1,3 @@
-
 const express = require("express");
 const cors = require("cors");
 const nodemailer = require("nodemailer");
@@ -7,7 +6,7 @@ const app = express();
 
 /* =========================
    MIDDLEWARE
-   ========================= */
+========================= */
 app.use(cors({
   origin: "*",
   methods: ["GET", "POST"]
@@ -17,7 +16,7 @@ app.use(express.json());
 
 /* =========================
    ROUTE: SEND OTP
-   ========================= */
+========================= */
 app.post("/send-otp", async (req, res) => {
 
   const { email, otp, firstName } = req.body;
@@ -34,8 +33,8 @@ app.post("/send-otp", async (req, res) => {
 
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
-      port: 587,
-      secure: false, // TLS
+      port: 465,
+      secure: true, // REQUIRED for 465
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
@@ -56,11 +55,11 @@ app.post("/send-otp", async (req, res) => {
       `
     };
 
-    // Verify SMTP connection
+    // Optional: verify SMTP connection
     await transporter.verify();
     console.log("SMTP connection verified");
 
-    // 🔥 ACTUAL SEND
+    // Send email
     await transporter.sendMail(mailOptions);
     console.log("OTP SENT SUCCESSFULLY");
 
@@ -83,14 +82,14 @@ app.post("/send-otp", async (req, res) => {
 
 /* =========================
    HEALTH CHECK
-   ========================= */
+========================= */
 app.get("/", (req, res) => {
   res.send("OTP Server Running");
 });
 
 /* =========================
    START SERVER
-   ========================= */
+========================= */
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {

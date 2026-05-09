@@ -71,3 +71,5 @@ Thumbs.db
 
 # Firebase / secrets
 serviceAccountKey.json
+resend api.txt
+.env

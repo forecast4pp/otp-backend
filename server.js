@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const sgMail = require("@sendgrid/mail");
+const nodemailer = require("nodemailer");
 
 const app = express();
 
@@ -15,13 +15,21 @@ app.use(cors({
 app.use(express.json());
 
 /* =========================
-   SENDGRID SETUP
+   SMTP SETUP (GMAIL)
 ========================= */
-if (!process.env.SENDGRID_API_KEY) {
-  console.error("❌ Missing SENDGRID_API_KEY");
+if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+  console.error("❌ Missing EMAIL_USER or EMAIL_PASS in .env");
 }
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS // MUST be App Password
+  }
+});
 
 /* =========================
    SEND OTP ROUTE
@@ -37,9 +45,9 @@ app.post("/send-otp", async (req, res) => {
   }
 
   try {
-    const msg = {
+    const mailOptions = {
+      from: `"Forecast App" <${process.env.EMAIL_USER}>`,
       to: email,
-      from: "Forecast App <your_verified_email@gmail.com>", // must be verified in SendGrid
       subject: "Your OTP Code",
       html: `
         <div style="font-family: Arial; padding: 16px;">
@@ -51,9 +59,9 @@ app.post("/send-otp", async (req, res) => {
       `
     };
 
-    const response = await sgMail.send(msg);
+    await transporter.sendMail(mailOptions);
 
-    console.log("✅ OTP SENT:", response[0].statusCode);
+    console.log("✅ OTP SENT SUCCESSFULLY");
 
     return res.json({
       status: "success",
@@ -61,7 +69,7 @@ app.post("/send-otp", async (req, res) => {
     });
 
   } catch (error) {
-    console.error("❌ SENDGRID ERROR:", error.response?.body || error.message);
+    console.error("❌ SMTP ERROR:", error);
 
     return res.status(500).json({
       status: "error",
@@ -75,7 +83,7 @@ app.post("/send-otp", async (req, res) => {
    HEALTH CHECK
 ========================= */
 app.get("/", (req, res) => {
-  res.send("OTP Server Running (SendGrid)");
+  res.send("OTP Server Running (SMTP)");
 });
 
 /* =========================

@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const { Resend } = require("resend");
+const sgMail = require("@sendgrid/mail");
 
 const app = express();
 
@@ -15,21 +15,20 @@ app.use(cors({
 app.use(express.json());
 
 /* =========================
-   RESEND SETUP
+   SENDGRID SETUP
 ========================= */
-if (!process.env.RESEND_API_KEY) {
-  console.error("❌ Missing RESEND_API_KEY in environment variables");
+if (!process.env.SENDGRID_API_KEY) {
+  console.error("❌ Missing SENDGRID_API_KEY");
 }
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 /* =========================
-   ROUTE: SEND OTP
+   SEND OTP ROUTE
 ========================= */
 app.post("/send-otp", async (req, res) => {
   const { email, otp, firstName } = req.body;
 
-  // Validation
   if (!email || !otp || !firstName) {
     return res.status(400).json({
       status: "error",
@@ -38,9 +37,9 @@ app.post("/send-otp", async (req, res) => {
   }
 
   try {
-    const result = await resend.emails.send({
-      from: "Forecast App <onboarding@resend.dev>",
+    const msg = {
       to: email,
+      from: "Forecast App <your_verified_email@gmail.com>", // must be verified in SendGrid
       subject: "Your OTP Code",
       html: `
         <div style="font-family: Arial; padding: 16px;">
@@ -50,9 +49,11 @@ app.post("/send-otp", async (req, res) => {
           <p>This code will expire soon.</p>
         </div>
       `
-    });
+    };
 
-    console.log("✅ OTP SENT:", result);
+    const response = await sgMail.send(msg);
+
+    console.log("✅ OTP SENT:", response[0].statusCode);
 
     return res.json({
       status: "success",
@@ -60,7 +61,7 @@ app.post("/send-otp", async (req, res) => {
     });
 
   } catch (error) {
-    console.error("❌ OTP EMAIL ERROR:", error);
+    console.error("❌ SENDGRID ERROR:", error.response?.body || error.message);
 
     return res.status(500).json({
       status: "error",
@@ -74,7 +75,7 @@ app.post("/send-otp", async (req, res) => {
    HEALTH CHECK
 ========================= */
 app.get("/", (req, res) => {
-  res.send("OTP Server Running");
+  res.send("OTP Server Running (SendGrid)");
 });
 
 /* =========================

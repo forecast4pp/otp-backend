@@ -121,7 +121,7 @@ async onRegister() {
 
     // 🔥 SEND OTP USING RENDER BACKEND
     await lastValueFrom(
-      this.http.post('https://otp-backend-5x4t.onrender.com/send-otp', {
+      this.http.post('https://otp-backend-z3aq.onrender.com/send-otp', {
         email: this.email,
         otp: generatedOtp,
         firstName: this.firstName
@@ -140,8 +140,14 @@ async onRegister() {
 
   } catch (error: any) {
     await loading.dismiss();
-    console.error(error);
-    this.showAlert('Registration Failed', 'Could not create account or send OTP.');
+    console.error('Registration error:', error);
+    let errorMessage = 'Could not create account or send OTP.';
+    if (error.status === 0) {
+      errorMessage += ' This might be a network issue or the server is unreachable. Please check your internet connection or try again later.';
+    } else if (error.message) {
+      errorMessage += ` Error details: ${error.message}`;
+    }
+    this.showAlert('Registration Failed', errorMessage);
   }
 }
 

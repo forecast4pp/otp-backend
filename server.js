@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const nodemailer = require("nodemailer");
+const { Resend } = require("resend");
 
 const app = express();
 
@@ -13,6 +13,11 @@ app.use(cors({
 }));
 
 app.use(express.json());
+
+/* =========================
+   RESEND SETUP
+========================= */
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 /* =========================
    ROUTE: SEND OTP
@@ -31,38 +36,21 @@ app.post("/send-otp", async (req, res) => {
 
   try {
 
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 465,
-      secure: true, // REQUIRED for 465
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-      }
-    });
-
-    const mailOptions = {
-      from: `"Forecast App" <${process.env.EMAIL_USER}>`,
+    const response = await resend.emails.send({
+      from: "Forecast App <onboarding@resend.dev>",
       to: email,
       subject: "Your OTP Code",
       html: `
-        <div style="font-family: Arial;">
+        <div style="font-family: Arial; padding: 10px;">
           <h2>Hello ${firstName}</h2>
           <p>Your OTP is:</p>
-          <h1>${otp}</h1>
+          <h1 style="letter-spacing: 5px;">${otp}</h1>
           <p>This code will expire soon.</p>
         </div>
       `
-    };
+    });
 
-    // Optional: verify SMTP connection
-    await transporter.verify();
-    console.log("SMTP connection verified");
-console.log("EMAIL_USER:", process.env.EMAIL_USER);
-console.log("EMAIL_PASS:", process.env.EMAIL_PASS ? "EXISTS" : "MISSING");
-    // Send email
-    await transporter.sendMail(mailOptions);
-    console.log("OTP SENT SUCCESSFULLY");
+    console.log("OTP SENT SUCCESSFULLY:", response);
 
     return res.json({
       status: "success",

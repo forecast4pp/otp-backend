@@ -58,7 +58,8 @@ app.post("/send-otp", async (req, res) => {
     // Optional: verify SMTP connection
     await transporter.verify();
     console.log("SMTP connection verified");
-
+console.log("EMAIL_USER:", process.env.EMAIL_USER);
+console.log("EMAIL_PASS:", process.env.EMAIL_PASS ? "EXISTS" : "MISSING");
     // Send email
     await transporter.sendMail(mailOptions);
     console.log("OTP SENT SUCCESSFULLY");

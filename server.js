@@ -35,14 +35,17 @@ const transporter = nodemailer.createTransport({
    SEND OTP ROUTE
 ========================= */
 app.post("/send-otp", async (req, res) => {
-  const { email, otp, firstName } = req.body;
+  const { email, firstName } = req.body;
 
-  if (!email || !otp || !firstName) {
+  if (!email || !firstName) {
     return res.status(400).json({
       status: "error",
       message: "Missing required fields"
     });
   }
+
+  // generate OTP HERE
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
   try {
     const mailOptions = {

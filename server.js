@@ -44,8 +44,8 @@ app.post("/send-otp", async (req, res) => {
 
   try {
     await transporter.sendMail({
-      from: `"Forecast App" <${process.env.BREVO_LOGIN}>`,
-      to: email,
+       from: `"Forecast App" <process.env.SENDER_EMAIL>`,      
+       to: email,
       subject: "Your OTP Code",
       html: `
         <h2>Hello ${firstName}</h2>

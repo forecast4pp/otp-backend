@@ -27,6 +27,7 @@
     "@capacitor/keyboard": "8.0.2",
     "@capacitor/status-bar": "8.0.2",
     "@ionic/angular": "^8.0.0",
+    "axios": "^1.16.0",
     "cors": "^2.8.6",
     "express": "^5.2.1",
     "firebase": "^12.12.0",

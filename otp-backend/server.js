@@ -1,22 +1,34 @@
 const express = require("express");
 const cors = require("cors");
 const nodemailer = require("nodemailer");
+
 const app = express();
 
-app.use(cors({ origin: "*", methods: ["GET", "POST"] }));
+/* =========================
+   MIDDLEWARE
+========================= */
+app.use(cors({
+  origin: "*",
+  methods: ["GET", "POST"]
+}));
+
 app.use(express.json());
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
-});
-// simple in-memory OTP store
-const otpStore = {};
 
 /* =========================
-   GENERATE OTP
+   BREVO SMTP SETUP
+========================= */
+const transporter = nodemailer.createTransport({
+  host: "smtp-relay.brevo.com",
+  port: 587,
+  secure: false,
+  auth: {
+    user: process.env.BREVO_LOGIN,
+    pass: process.env.BREVO_SMTP_KEY
+  }
+});
+
+/* =========================
+   SEND OTP ROUTE
 ========================= */
 app.post("/send-otp", async (req, res) => {
   const { email, firstName } = req.body;
@@ -28,18 +40,11 @@ app.post("/send-otp", async (req, res) => {
     });
   }
 
-  const otp = Math.floor(100000 + Math.random() * 900000);
-
-  // SAVE OTP
-  otpStore[email] = {
-    otp,
-    expires: Date.now() + 5 * 60 * 1000 // 5 minutes
-  };
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
   try {
     await transporter.sendMail({
-      from: `"Forecast App" <${process.env.EMAIL_USER}>`,
-      to: email,
+from: `"Forecast App" <process.env.SENDER_EMAIL>`,      to: email,
       subject: "Your OTP Code",
       html: `
         <h2>Hello ${firstName}</h2>
@@ -48,59 +53,33 @@ app.post("/send-otp", async (req, res) => {
       `
     });
 
+    console.log("OTP sent:", otp);
+
     return res.json({
       status: "success",
       message: "OTP sent successfully"
     });
 
   } catch (error) {
-    console.error(error);
+    console.error("SMTP ERROR:", error);
+
     return res.status(500).json({
       status: "error",
-      message: "Failed to send OTP"
+      message: "Failed to send OTP",
+      error: error.message
     });
   }
 });
 
 /* =========================
-   VERIFY OTP
+   HEALTH CHECK
 ========================= */
-app.post("/verify-otp", (req, res) => {
-  const { email, otp } = req.body;
-
-  const record = otpStore[email];
-
-  if (!record) {
-    return res.status(400).json({
-      status: "error",
-      message: "No OTP found"
-    });
-  }
-
-  if (Date.now() > record.expires) {
-    return res.status(400).json({
-      status: "error",
-      message: "OTP expired"
-    });
-  }
-
-  if (parseInt(otp) !== record.otp) {
-    return res.status(400).json({
-      status: "error",
-      message: "Invalid OTP"
-    });
-  }
-
-  delete otpStore[email];
-
-  return res.json({
-    status: "success",
-    message: "OTP verified"
-  });
+app.get("/", (req, res) => {
+  res.send("OTP Server Running (Brevo SMTP)");
 });
 
 /* =========================
-   SERVER
+   START SERVER
 ========================= */
 const PORT = process.env.PORT || 3000;
 

@@ -44,11 +44,10 @@ app.post("/send-otp", async (req, res) => {
     });
   }
 
-  // generate OTP HERE
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
   try {
-    const mailOptions = {
+    await transporter.sendMail({
       from: `"Forecast App" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: "Your OTP Code",
@@ -56,23 +55,21 @@ app.post("/send-otp", async (req, res) => {
         <div style="font-family: Arial; padding: 16px;">
           <h2>Hello ${firstName}</h2>
           <p>Your OTP code is:</p>
-          <h1 style="letter-spacing: 6px; font-size: 32px;">${otp}</h1>
-          <p>This code will expire soon.</p>
+          <h1 style="letter-spacing: 6px;">${otp}</h1>
         </div>
       `
-    };
+    });
 
-    await transporter.sendMail(mailOptions);
-
-    console.log("✅ OTP SENT SUCCESSFULLY");
+    console.log("OTP sent:", otp);
 
     return res.json({
       status: "success",
-      message: "OTP sent successfully"
+      message: "OTP sent successfully",
+      otp // (TEMP for debugging only)
     });
 
   } catch (error) {
-    console.error("❌ SMTP ERROR:", error);
+    console.error("SMTP ERROR:", error);
 
     return res.status(500).json({
       status: "error",
@@ -81,7 +78,6 @@ app.post("/send-otp", async (req, res) => {
     });
   }
 });
-
 /* =========================
    HEALTH CHECK
 ========================= */

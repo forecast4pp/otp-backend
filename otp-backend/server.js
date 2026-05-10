@@ -1,59 +1,52 @@
-require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const { Resend } = require("resend");
-
+const nodemailer = require("nodemailer");
 const app = express();
 
-/* =========================
-   MIDDLEWARE
-========================= */
-app.use(cors({
-  origin: "*",
-  methods: ["GET", "POST"]
-}));
-
+app.use(cors({ origin: "*", methods: ["GET", "POST"] }));
 app.use(express.json());
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
+});
+// simple in-memory OTP store
+const otpStore = {};
 
 /* =========================
-   RESEND SETUP
-========================= */
-if (!process.env.RESEND_API_KEY) {
-  console.error("❌ Missing RESEND_API_KEY in environment variables");
-}
-
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-/* =========================
-   ROUTE: SEND OTP
+   GENERATE OTP
 ========================= */
 app.post("/send-otp", async (req, res) => {
-  const { email, otp, firstName } = req.body;
+  const { email, firstName } = req.body;
 
-  // Validation
-  if (!email || !otp || !firstName) {
+  if (!email || !firstName) {
     return res.status(400).json({
       status: "error",
       message: "Missing required fields"
     });
   }
 
+  const otp = Math.floor(100000 + Math.random() * 900000);
+
+  // SAVE OTP
+  otpStore[email] = {
+    otp,
+    expires: Date.now() + 5 * 60 * 1000 // 5 minutes
+  };
+
   try {
-    const result = await resend.emails.send({
-      from: "Forecast App <onboarding@resend.dev>",
+    await transporter.sendMail({
+      from: `"Forecast App" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: "Your OTP Code",
       html: `
-        <div style="font-family: Arial; padding: 16px;">
-          <h2>Hello ${firstName}</h2>
-          <p>Your OTP code is:</p>
-          <h1 style="letter-spacing: 6px; font-size: 32px;">${otp}</h1>
-          <p>This code will expire soon.</p>
-        </div>
+        <h2>Hello ${firstName}</h2>
+        <p>Your OTP code is:</p>
+        <h1>${otp}</h1>
       `
     });
-
-    console.log("✅ OTP SENT:", result);
 
     return res.json({
       status: "success",
@@ -61,25 +54,53 @@ app.post("/send-otp", async (req, res) => {
     });
 
   } catch (error) {
-    console.error("❌ OTP EMAIL ERROR:", error);
-
+    console.error(error);
     return res.status(500).json({
       status: "error",
-      message: "Failed to send OTP",
-      error: error.message
+      message: "Failed to send OTP"
     });
   }
 });
 
 /* =========================
-   HEALTH CHECK
+   VERIFY OTP
 ========================= */
-app.get("/", (req, res) => {
-  res.send("OTP Server Running");
+app.post("/verify-otp", (req, res) => {
+  const { email, otp } = req.body;
+
+  const record = otpStore[email];
+
+  if (!record) {
+    return res.status(400).json({
+      status: "error",
+      message: "No OTP found"
+    });
+  }
+
+  if (Date.now() > record.expires) {
+    return res.status(400).json({
+      status: "error",
+      message: "OTP expired"
+    });
+  }
+
+  if (parseInt(otp) !== record.otp) {
+    return res.status(400).json({
+      status: "error",
+      message: "Invalid OTP"
+    });
+  }
+
+  delete otpStore[email];
+
+  return res.json({
+    status: "success",
+    message: "OTP verified"
+  });
 });
 
 /* =========================
-   START SERVER
+   SERVER
 ========================= */
 const PORT = process.env.PORT || 3000;
 

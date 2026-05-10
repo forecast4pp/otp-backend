@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const axios = require("axios");
@@ -7,11 +8,12 @@ const app = express();
 
 /* =========================
    FIREBASE ADMIN INIT
+   (FIXED: use JSON FILE, NOT env parse)
 ========================= */
+const serviceAccount = require("./serviceAccountKey.json");
+
 admin.initializeApp({
-  credential: admin.credential.cert(
-    JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)
-  )
+  credential: admin.credential.cert(serviceAccount),
 });
 
 const db = admin.firestore();
@@ -33,7 +35,7 @@ const BREVO_API_KEY = process.env.BREVO_API_KEY;
 const SENDER_EMAIL = process.env.SENDER_EMAIL;
 
 if (!BREVO_API_KEY || !SENDER_EMAIL) {
-  console.error("❌ Missing ENV variables");
+  console.error("❌ Missing ENV variables (BREVO_API_KEY or SENDER_EMAIL)");
 }
 
 /* =========================
@@ -50,19 +52,30 @@ app.post("/send-otp", async (req, res) => {
       });
     }
 
-    // Generate OTP ONCE
+    // CHECK IF ACCOUNT EXISTS
+    const docRef = db.collection("accounts").doc(docId);
+    const docSnap = await docRef.get();
+
+    if (!docSnap.exists) {
+      return res.status(404).json({
+        status: "error",
+        message: "Account not found"
+      });
+    }
+
+    // GENERATE OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    // Save OTP to Firestore
-    await db.collection("accounts").doc(docId).update({
-      otp: otp,
+    // SAVE OTP TO FIRESTORE
+    await docRef.update({
+      otp,
       isVerified: false,
       otpCreatedAt: admin.firestore.FieldValue.serverTimestamp()
     });
 
-    console.log("📩 Sending OTP to:", email);
+    console.log("📩 OTP generated for:", email);
 
-    // Send email via Brevo
+    // SEND EMAIL VIA BREVO
     const response = await axios.post(
       "https://api.brevo.com/v3/smtp/email",
       {
@@ -95,15 +108,15 @@ app.post("/send-otp", async (req, res) => {
       }
     );
 
-    console.log("✅ Brevo response:", response.data);
+    console.log("✅ Email sent:", response.data);
 
     return res.json({
       status: "success",
-      message: "OTP sent and saved successfully"
+      message: "OTP sent successfully"
     });
 
   } catch (error) {
-    console.error("❌ BREVO ERROR:", error.response?.data || error.message);
+    console.error("❌ ERROR:", error.response?.data || error.message);
 
     return res.status(500).json({
       status: "error",
@@ -116,7 +129,7 @@ app.post("/send-otp", async (req, res) => {
    HEALTH CHECK
 ========================= */
 app.get("/", (req, res) => {
-  res.send("🚀 OTP Server Running (Brevo + Firebase)");
+  res.send("🚀 OTP Server Running (Brevo + Firebase Admin)");
 });
 
 /* =========================

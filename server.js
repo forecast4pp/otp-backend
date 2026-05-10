@@ -15,19 +15,15 @@ app.use(cors({
 app.use(express.json());
 
 /* =========================
-   SMTP SETUP (GMAIL)
+   BREVO SMTP SETUP
 ========================= */
-if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-  console.error("❌ Missing EMAIL_USER or EMAIL_PASS in .env");
-}
-
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
+  host: "smtp-relay.brevo.com",
+  port: 587,
+  secure: false,
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS // MUST be App Password
+    user: process.env.BREVO_LOGIN,
+    pass: process.env.BREVO_SMTP_KEY
   }
 });
 
@@ -48,15 +44,13 @@ app.post("/send-otp", async (req, res) => {
 
   try {
     await transporter.sendMail({
-      from: `"Forecast App" <${process.env.EMAIL_USER}>`,
+      from: `"Forecast App" <${process.env.BREVO_LOGIN}>`,
       to: email,
       subject: "Your OTP Code",
       html: `
-        <div style="font-family: Arial; padding: 16px;">
-          <h2>Hello ${firstName}</h2>
-          <p>Your OTP code is:</p>
-          <h1 style="letter-spacing: 6px;">${otp}</h1>
-        </div>
+        <h2>Hello ${firstName}</h2>
+        <p>Your OTP code is:</p>
+        <h1>${otp}</h1>
       `
     });
 
@@ -64,8 +58,7 @@ app.post("/send-otp", async (req, res) => {
 
     return res.json({
       status: "success",
-      message: "OTP sent successfully",
-      otp // (TEMP for debugging only)
+      message: "OTP sent successfully"
     });
 
   } catch (error) {
@@ -78,11 +71,12 @@ app.post("/send-otp", async (req, res) => {
     });
   }
 });
+
 /* =========================
    HEALTH CHECK
 ========================= */
 app.get("/", (req, res) => {
-  res.send("OTP Server Running (SMTP)");
+  res.send("OTP Server Running (Brevo SMTP)");
 });
 
 /* =========================

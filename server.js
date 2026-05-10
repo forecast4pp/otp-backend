@@ -10,10 +10,11 @@ const app = express();
    FIREBASE ADMIN INIT
    (FIXED: use JSON FILE, NOT env parse)
 ========================= */
-const serviceAccount = require("./serviceAccountKey.json");
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+  credential: admin.credential.cert(
+    JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)
+  )
 });
 
 const db = admin.firestore();

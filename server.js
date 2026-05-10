@@ -15,6 +15,17 @@ app.use(cors({
 app.use(express.json());
 
 /* =========================
+   ENV CHECK (IMPORTANT)
+========================= */
+const BREVO_API_KEY = process.env.BREVO_API_KEY;
+const SENDER_EMAIL = process.env.SENDER_EMAIL;
+
+if (!BREVO_API_KEY || !SENDER_EMAIL) {
+  console.error("❌ Missing ENV variables:");
+  console.error("BREVO_API_KEY or SENDER_EMAIL is undefined");
+}
+
+/* =========================
    SEND OTP ROUTE
 ========================= */
 app.post("/send-otp", async (req, res) => {
@@ -24,53 +35,64 @@ app.post("/send-otp", async (req, res) => {
     if (!email || !firstName) {
       return res.status(400).json({
         status: "error",
-        message: "Missing required fields"
+        message: "Missing email or firstName"
       });
     }
 
+    // Generate OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    await axios.post(
+    console.log("📩 Sending OTP to:", email);
+
+    const response = await axios.post(
       "https://api.brevo.com/v3/smtp/email",
       {
         sender: {
           name: "Forecast App",
-          email: process.env.SENDER_EMAIL
+          email: SENDER_EMAIL
         },
         to: [
           {
-            email: email,
+            email,
             name: firstName
           }
         ],
         subject: "Your OTP Code",
         htmlContent: `
-          <h2>Hello ${firstName}</h2>
-          <p>Your OTP Code:</p>
-          <h1 style="letter-spacing:6px">${otp}</h1>
+          <div style="font-family: Arial">
+            <h2>Hello ${firstName},</h2>
+            <p>Your OTP code is:</p>
+            <h1 style="letter-spacing:8px; color:#2d6cdf">${otp}</h1>
+            <p>This code will expire soon.</p>
+          </div>
         `
       },
       {
         headers: {
-          "api-key": process.env.BREVO_API_KEY,
-          "Content-Type": "application/json"
+          "api-key": BREVO_API_KEY,
+          "Content-Type": "application/json",
+          "accept": "application/json"
         }
       }
     );
 
-    console.log("✅ OTP sent to:", email);
+    console.log("✅ Brevo response:", response.data);
 
     return res.json({
       status: "success",
-      message: "OTP sent successfully"
+      message: "OTP sent successfully",
+      // optional for debugging (REMOVE IN PROD)
+      otp
     });
 
   } catch (error) {
-    console.error("❌ BREVO ERROR:", error.response?.data || error.message);
+    console.error("❌ BREVO ERROR:");
+    console.error(error.response?.data || error.message);
 
     return res.status(500).json({
       status: "error",
-      message: "Failed to send OTP"
+      message: "Failed to send OTP",
+      details: error.response?.data || error.message
     });
   }
 });
@@ -79,7 +101,7 @@ app.post("/send-otp", async (req, res) => {
    HEALTH CHECK
 ========================= */
 app.get("/", (req, res) => {
-  res.send("OTP Server Running (Brevo API)");
+  res.send("🚀 OTP Server Running (Brevo API)");
 });
 
 /* =========================
